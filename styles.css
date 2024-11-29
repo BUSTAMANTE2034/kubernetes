@@ -1,0 +1,25 @@
+.container {
+    margin-top: 20px;
+    }
+
+.resource-section {
+    margin-bottom: 50px;
+}
+
+.resource-section h2 {
+    margin-bottom: 20px;
+}
+
+.resource-buttons {
+    margin-bottom: 20px;
+}
+
+.modal .modal-body label {
+    display: block;
+}
+
+.modal .modal-body input,
+.modal .modal-body select {
+    width: 100%;
+    margin-bottom: 10px;
+}

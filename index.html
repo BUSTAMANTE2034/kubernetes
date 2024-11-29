@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>¡Bustamante API!</title>
+    <!-- Include Bootstrap CSS -->
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+    />
+    <link rel="stylesheet" href="styles.css">
+
+    <!-- Optional: Include jQuery -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <!-- Include Bootstrap JS -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+    <script src="script.js"></script>
+
+  </head>
+  <body>
+    <div id="connection-message" class="alert alert-info" role="alert">
+      Conectando con el API...
+    </div>
+    <div class="container">
+      <!-- Activities Section -->
+      <div class="resource-section" id="activities-section">
+        <h2>Actividades</h2>
+        <div class="resource-buttons">
+          <button class="btn btn-primary" onclick="getActivities()">GET</button>
+          <button class="btn btn-success" onclick="openActivityModal('POST')">
+            POST
+          </button>
+          <button class="btn btn-warning" onclick="openActivityModal('PUT')">
+            PUT
+          </button>
+          <button class="btn btn-danger" onclick="deleteActivity()">
+            DELETE
+          </button>
+        </div>
+        <table class="table table-striped" id="activities-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Nombre</th>
+              <th>Horas Totales</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Activities data will be inserted here -->
+          </tbody>
+        </table>
+      </div>
+      <!-- Students Section -->
+      <div class="resource-section" id="students-section">
+        <h2>Estudiantes</h2>
+        <div class="resource-buttons">
+          <button class="btn btn-primary" onclick="getStudents()">GET</button>
+          <button class="btn btn-success" onclick="openStudentModal('POST')">
+            POST
+          </button>
+          <button class="btn btn-warning" onclick="openStudentModal('PUT')">
+            PUT
+          </button>
+          <button class="btn btn-danger" onclick="deleteStudent()">
+            DELETE
+          </button>
+        </div>
+        <table class="table table-striped" id="students-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Nombre Completo</th>
+              <th>Carrera</th>
+              <th>Semestre</th>
+              <th>Edad</th>
+              <th>Créditos Complementarios</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Students data will be inserted here -->
+          </tbody>
+        </table>
+      </div>
+      <!-- Teachers Section -->
+      <div class="resource-section" id="teachers-section">
+        <h2>Maestros</h2>
+        <div class="resource-buttons">
+          <button class="btn btn-primary" onclick="getTeachers()">GET</button>
+          <button class="btn btn-success" onclick="openTeacherModal('POST')">
+            POST
+          </button>
+          <button class="btn btn-warning" onclick="openTeacherModal('PUT')">
+            PUT
+          </button>
+          <button class="btn btn-danger" onclick="deleteTeacher()">
+            DELETE
+          </button>
+        </div>
+        <table class="table table-striped" id="teachers-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Nombre Completo</th>
+              <th>ID de Actividad</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Teachers data will be inserted here -->
+          </tbody>
+        </table>
+      </div>
+      <!-- In Progress Section -->
+      <div class="resource-section" id="inprogress-section">
+        <h2>Clases en Progreso</h2>
+        <div class="resource-buttons">
+          <button class="btn btn-primary" onclick="getInProgress()">GET</button>
+          <button class="btn btn-success" onclick="openInProgressModal('POST')">
+            POST
+          </button>
+          <button class="btn btn-warning" onclick="openInProgressModal('PUT')">
+            PUT
+          </button>
+          <button class="btn btn-danger" onclick="deleteInProgress()">
+            DELETE
+          </button>
+        </div>
+        <table class="table table-striped" id="inprogress-table">
+          <thead>
+            <tr>
+              <th>ID del Curso</th>
+              <th>ID del Estudiante</th>
+              <th>ID del Maestro</th>
+              <th>Día de la Semana</th>
+              <th>Horario</th>
+              <th>Horas Completadas</th>
+              <th>Horas Pendientes</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- InProgress data will be inserted here -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Modals -->
+    <!-- Activity Modal -->
+    <div
+      class="modal fade"
+      id="activityModal"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="activityModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog" role="document">
+        <form id="activityForm">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="activityModalLabel">Actividad</h5>
+              <button
+                type="button"
+                class="close"
+                data-dismiss="modal"
+                aria-label="Close"
+                onclick="$('#activityModal').modal('hide')"
+              >
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <label for="activity_id"
+                >ID de Actividad (requerido para PUT)</label
+              >
+              <input type="number" id="activity_id" name="activity_id" />
+              <label for="name">Nombre</label>
+              <input type="text" id="name" name="name" required />
+              <label for="total_hours">Horas Totales</label>
+              <input
+                type="number"
+                id="total_hours"
+                name="total_hours"
+                required
+              />
+            </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                data-dismiss="modal"
+                onclick="$('#activityModal').modal('hide')"
+              >
+                Cerrar
+              </button>
+              <button
+                type="submit"
+                class="btn btn-primary"
+                id="activityModalSaveButton"
+              >
+                Guardar
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+    <!-- Student Modal -->
+    <div
+      class="modal fade"
+      id="studentModal"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="studentModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog" role="document">
+        <form id="studentForm">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="studentModalLabel">Estudiante</h5>
+              <button
+                type="button"
+                class="close"
+                data-dismiss="modal"
+                aria-label="Close"
+                onclick="$('#studentModal').modal('hide')"
+              >
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <label for="student_id"
+                >ID de Estudiante (requerido para PUT)</label
+              >
+              <input type="number" id="student_id" name="student_id" />
+              <label for="student_full_name">Nombre Completo</label>
+              <input
+                type="text"
+                id="student_full_name"
+                name="full_name"
+                required
+              />
+              <label for="major">Carrera</label>
+              <input type="text" id="major" name="major" required />
+              <label for="semester">Semestre</label>
+              <input type="number" id="semester" name="semester" required />
+              <label for="age">Edad</label>
+              <input type="number" id="age" name="age" required />
+              <label for="complementary_credits"
+                >Créditos Complementarios</label
+              >
+              <input
+                type="number"
+                id="complementary_credits"
+                name="complementary_credits"
+              />
+            </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                data-dismiss="modal"
+                onclick="$('#studentModal').modal('hide')"
+              >
+                Cerrar
+              </button>
+              <button
+                type="submit"
+                class="btn btn-primary"
+                id="studentModalSaveButton"
+              >
+                Guardar
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+    <!-- Teacher Modal -->
+    <div
+      class="modal fade"
+      id="teacherModal"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="teacherModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog" role="document">
+        <form id="teacherForm">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="teacherModalLabel">Maestro</h5>
+              <button
+                type="button"
+                class="close"
+                data-dismiss="modal"
+                aria-label="Close"
+                onclick="$('#teacherModal').modal('hide')"
+              >
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <label for="teacher_id">ID de Maestro (requerido para PUT)</label>
+              <input type="number" id="teacher_id" name="teacher_id" />
+              <label for="teacher_full_name">Nombre Completo</label>
+              <input
+                type="text"
+                id="teacher_full_name"
+                name="full_name"
+                required
+              />
+              <label for="teacher_activity_id">ID de Actividad</label>
+              <input
+                type="number"
+                id="teacher_activity_id"
+                name="activity_id"
+                required
+              />
+            </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                data-dismiss="modal"
+                onclick="$('#teacherModal').modal('hide')"
+              >
+                Cerrar
+              </button>
+              <button
+                type="submit"
+                class="btn btn-primary"
+                id="teacherModalSaveButton"
+              >
+                Guardar
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+    <!-- In Progress Modal -->
+    <div
+      class="modal fade"
+      id="inProgressModal"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="inProgressModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog" role="document">
+        <form id="inProgressForm">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="inProgressModalLabel">
+                Clase en Progreso
+              </h5>
+              <button
+                type="button"
+                class="close"
+                data-dismiss="modal"
+                aria-label="Close"
+                onclick="$('#inProgressModal').modal('hide')"
+              >
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <label for="course_id">ID del Curso (requerido para PUT)</label>
+              <input type="number" id="course_id" name="course_id" />
+              <label for="inprogress_student_id">ID del Estudiante</label>
+              <input
+                type="number"
+                id="inprogress_student_id"
+                name="student_id"
+                required
+              />
+              <label for="inprogress_teacher_id">ID del Maestro</label>
+              <input
+                type="number"
+                id="inprogress_teacher_id"
+                name="teacher_id"
+                required
+              />
+              <label for="day_of_week">Día de la Semana</label>
+              <input type="text" id="day_of_week" name="day_of_week" required />
+              <label for="schedule">Horario</label>
+              <input type="text" id="schedule" name="schedule" required />
+              <label for="hours_completed">Horas Completadas</label>
+              <input
+                type="number"
+                id="hours_completed"
+                name="hours_completed"
+                required
+              />
+              <label for="hours_pending">Horas Pendientes</label>
+              <input
+                type="number"
+                id="hours_pending"
+                name="hours_pending"
+                required
+              />
+            </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                data-dismiss="modal"
+                onclick="$('#inProgressModal').modal('hide')"
+              >
+                Cerrar
+              </button>
+              <button
+                type="submit"
+                class="btn btn-primary"
+                id="inProgressModalSaveButton"
+              >
+                Guardar
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </body>
+</html>
